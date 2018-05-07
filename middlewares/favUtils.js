@@ -40,15 +40,15 @@ var addToFavFile = (recipe) => {
  * @returns false if user already exists
  */
 var noRepeatFavs = (recipe, user) => {
-    checkFavRecords();
+    var found = false;
     if (favRecords[user]) {
         for (var i = 0; i < favRecords[user].length; i++) {
             if (favRecords[user][i].uri === recipe.uri) {
-                return false
+                found = true
             }
         }
     }
-    return true
+    return !found;
 };
 
 module.exports = {
