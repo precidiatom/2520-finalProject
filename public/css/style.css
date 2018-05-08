@@ -13,8 +13,9 @@ body {
 /* style of search history */
 	text-align: center;
 	font-family: 'Swanky and Moo Moo';
-	font-size: 30px;
-	margin:3%;
+	font-size: 25px;
+	margin:1%;
+    height: 1vh;
 }
 .butts {
 	width: 100%;
@@ -233,8 +234,7 @@ body {
 	/*background-color: blue;*/
 	height: 80%;
 	margin: 0% 3% 0% 3%;
-	overflow-y: scroll;
-	overflow-x: hidden;
+	
 }
 #cat-ingredients-div {
 	/*background-color: red;*/
@@ -395,6 +395,13 @@ a:visited {
     font-family: Marker Felt, fantasy;
     color: #DCDCDC;
     z-index: 10;
+}
+
+#searchlist {
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 20vh;
 }
 
 /*test */
