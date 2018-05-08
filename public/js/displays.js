@@ -6,16 +6,20 @@ var pushleft = true;
 /*-------------foodDisplay-------------*/
 showSearchHistory();
 
-
 /**
  * Displays the search history below search bar
  */
 function showSearchHistory() {
     currentSearchHistory = JSON.parse(localStorage.getItem('searchHistory'));
+
     if (!currentSearchHistory) {
-        localStorage.setItem('searchHistory', JSON.stringify({}));
+        currentSearchHistory = {};
+        currentSearchHistory[currentUser] = [];
+
+        localStorage.setItem('searchHistory', JSON.stringify(currentSearchHistory));
         currentSearchHistory = JSON.parse(localStorage.getItem('searchHistory'));
     }
+
     var foodList = document.getElementById('food-list');
 
     if (!currentSearchHistory[currentUser]) {
@@ -29,7 +33,7 @@ function showSearchHistory() {
 
 
     for (i = 0; i < currentSearchHistory[currentUser].length; i++) {
-        var ndiv = document.createElement("p");
+        var ndiv = document.createElement("a");
         ndiv.innerHTML = currentSearchHistory[currentUser][i].value;
         var tags = Object.values(currentSearchHistory[currentUser][i]);
         for (j = 1; j < tags.length - 1; j++) {
@@ -56,7 +60,6 @@ function showSearchHistory() {
 function showResults() {
     hidePusheen();
     document.getElementById('welcome-div').style.display = 'None';
-    localStorage.setItem('currentRecipes', JSON.stringify(currentResults));
     for (var i = 0; i < currentResults.length - 1; i++) {
 
         var node = document.createElement('a');
@@ -91,8 +94,16 @@ function showResults() {
         saveFavBtn.onclick = (function (recipe) {
             return function () {
                 addRecipeLabelBtn(recipe);
-                recipe.currentUser = currentUser;
-                hiddenFavInp.value = JSON.stringify(recipe);
+                addToFavoritesList(recipe);
+                hiddenFavInp.value = JSON.stringify({
+                    uri: recipe.uri,
+                    label: recipe.label,
+                    dietLabels: recipe.dietLabels,
+                    healthLabels: recipe.healthLabels,
+                    image: recipe.image,
+                    ingredientLines: recipe.ingredientLines,
+                    currentUser: currentUser
+                });
                 swal(`Added ${recipe.label} to Favourites!`);
                 hiddenFavForm.submit();
             }
@@ -147,8 +158,7 @@ var hiddenpush = document.getElementById("hiddenpusheen");
 
 function showPusheen() {
     document.getElementById("ctrlpanel").style.left = '0px';
-    hiddenpush.style.left = "47.5%";
-    document.getElementById("big-page-div").style.width = "50%";
+    hiddenpush.style.left = "77.5%";
     pushleft = 0;
 }
 
@@ -156,9 +166,8 @@ function showPusheen() {
  * Closes the search pangel
  */
 function hidePusheen() {
-    document.getElementById("ctrlpanel").style.left = '-50%';
+    document.getElementById("ctrlpanel").style.left = '-80%';
     hiddenpush.style.left = "0%";
-    document.getElementById("big-page-div").style.width = "100%";
     pushleft = 1
 }
 
