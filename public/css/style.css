@@ -1,12 +1,15 @@
 body {
 /* style of the whole website*/
-	font-family: "Bubblegum Sans", sans-serif;
+	font-family: 'Swanky and Moo Moo';
+    font-weight: bold;
 	background-color: #89CFF0;
 	overflow-x: hidden;
 }
 /* classes */
 .texts {
 	text-align: center;
+    font-family: 'Swanky and Moo Moo';
+    font-size: 25px;
 	/*font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;*/
 }
 .added-ingredients {
@@ -224,9 +227,9 @@ body {
 	text-align: left;
 	font-size: 20px;
 	background-color: white;
-	padding:5%;
+	padding:2%;
 	position: relative;
-	margin: 5% 5% 5%;
+	margin: 2% 2% 2%;
 }
 #food-list {
 	position: relative;
@@ -276,7 +279,13 @@ body {
 }
 #welcome-msg {
 	font-size: 225%;
-    font-family: Impact;
+    font-family: "Swanky and Moo Moo";
+    font-weight: bold;
+}
+
+#welcome-user-msg {
+    font-family: "Swanky and Moo Moo";
+    font-weight: bold;
 }
 #food-search {
 	width: 25%;
