@@ -1,22 +1,25 @@
 // contents inside fridge
 var vegList = [], // object list
     vegListImport = []; // record of created objects for faster processing
-    /* ------------------- to be changed to blank when merged with hbs ----------------- */
-    // list of items saved from elsewhere; currently just a default list of items
-    vegListSaved = ["potato","carrot","tomato","bellPepper","garlic","eggplant","corn","cucumber","beef","chicken"];
-    emptySlot = []; // un-occupied slots after delete is used
+/* ------------------- to be changed to blank when merged with hbs ----------------- */
+// list of items saved from elsewhere; currently just a default list of items
+vegListSaved = ["potato", "carrot", "tomato", "bellPepper", "garlic", "eggplant", "corn", "cucumber", "beef", "chicken"];
+emptySlot = []; // un-occupied slots after delete is used
 
-/* ---------- temporary input box for testing, to be changed when merged with hbs ------------- */
+/* ---------- fridge input box ------------- */
 var fridgeInput = document.getElementById("inputBox");
 
-inputBox.onkeyup = function (ev) {
+
+// fridge input box event listener
+fridgeInput.onkeyup = function (ev) {
     if (ev.keyCode == 13) {
-        if (this.value == "") {
+        // disallow blank entry
+        if (checkBlank(this.value)) {
             return;
-        } // disallow blank entry
-        var temp = this.value.split(','); // convert input into an array
-        temp = temp.filter(x => !vegListImport.includes(x)); // find all non-duplicate entries
-        vegListImport = vegListImport.concat(temp); // add non-duplicate entries into existing array
+        }
+        // add non-duplicate entries into existing array
+        var temp = formatInput(this.value, vegListImport);
+        vegListImport = vegListImport.concat(temp);
         populate(temp); // create objects associated with non-duplicate entries
     }
 };
@@ -42,22 +45,20 @@ var bgImg = document.getElementById("fridgeBG"),
     botClose = document.getElementById("botClose"),
     tempBox = document.getElementById("tempBox");
 
-// fridge door control switch    
-var doorState = [1, 1]; // slot 0 top door, slot 1 bottom door, default open
-
+/* ------------------------------ delete button -------------------------------- */
 // delete controller
-var delState = 0,
+var delState = false,
     delButton = document.getElementById("fridgeDelete");
 
-delButton.addEventListener("click", function () {
-    if (delState == 0) {
-        delState = 1;
-        this.style.backgroundColor = "red";
-    } else {
-        delState = 0;
-        this.style.backgroundColor = "";
-    }
-});
+
+// delete button event listener
+delButton.onclick = () => {
+    delState = delToggle(delState,delButton);
+};
+
+
+/* ------------------------------ fridge content -------------------------------- */
+
 
 /**
  * move created fridge contents to the correct position
@@ -65,9 +66,11 @@ delButton.addEventListener("click", function () {
  */
 function movePosition(object) {
     // find the index of this item in vegList
-    index = vegList.findIndex(x => x.id == object.dataset.tag);
-    row = Math.floor(vegList[index].slot / 3);
-    column = vegList[index].slot % 3;
+    var index = searchIndex(object,vegList);
+    // determine the row and column number
+    [row, column] = findPosition(vegList[index].slot);
+
+    // row position
     switch (row) {
         case 0:
         case 1:
@@ -80,8 +83,11 @@ function movePosition(object) {
 
     }
 
+    // column position
     object.style.left = String(230 + column * 65) + "px";
 }
+
+/*------------------------------------------- fridge doors -------------------------------- */
 
 /**
  * Deselect all items in the list in fridge
@@ -89,11 +95,14 @@ function movePosition(object) {
  */
 function hideItems(list) {
     for (var i = 0; i < list.length; i += 1) {
-        var index = vegList.findIndex(x => x.id == list[i].dataset.tag);
+        var index = searchIndex(list[i],vegList);
         vegList[index].active = 1;
         list[i].style.opacity = 0.2;
     }
 }
+
+// fridge door control switch    
+var doorState = [1, 1]; // slot 0 top door, slot 1 bottom door, default open
 
 /**
  * Display the fridge based on door open/close state
@@ -148,41 +157,25 @@ function changeDoor(door) {
 topDoor.onclick = () => {
     changeDoor(0);
 };
+
 botDoor.onclick = () => {
     changeDoor(1);
 };
+
 topClose.onclick = () => {
     changeDoor(0);
 };
+
 botClose.onclick = () => {
     changeDoor(1);
 };
 
-/**
-=======
-topDoor.onclick = () => {changeDoor(0);};
-botDoor.onclick = () => {changeDoor(1);};
-topClose.onclick = () => {changeDoor(0);};
-botClose.onclick = () => {changeDoor(1);};
 
 /**
- * Check if an image file exists
- * @param {string} source - name of the image file
- */
-function check_img(source) {
-    var img = new Image();
-    img.src = "../imgs/" + source + ".png";
-    img.onload = () => {return true;}
-    img.onerror = () => {return false;}
-}
-
-/** 
->>>>>>> c306932f68795077a241204aa40cd054980f5f33
  * Auto generate objects for each fridge item and store in VegList
  * @param {list} list - list of names of fridge contents
  */
 function populate(list) {
-    console.log(list);
     var extra = vegList.length; // slot shift
     for (var i = 0; i < list.length; i += 1) {
         if (vegList.length >= 15) {  // fridge full
@@ -195,10 +188,8 @@ function populate(list) {
         item.dataset.tag = list[i];
 
         // check if image file exist
-        if (check_img(list[i])) {
-            item.style.backgroundImage = "url(../imgs/" + list[i] + ".png)";            
-        } else {
-            item.style.backgroundImage = "url(../imgs/box.png)";
+        if (checkImg(list[i], item)) {
+            item.style.backgroundImage = "url(../imgs/" + list[i] + ".png)";
         }
 
         item.style.display = "block";
@@ -296,7 +287,7 @@ function delObject(object, index) {
  */
 function selectVeg(object) {
     // find the index of this item in vegList
-    index = vegList.findIndex(x => x.id == object.dataset.tag);
+    var index = searchIndex(object,vegList);
 
     if (delState == 0) { // delete is inactive, select items
         if (vegList[index].active == 1) {
@@ -319,7 +310,7 @@ function selectVeg(object) {
  */
 function hoverVeg(object, exit = 0) {
     // find the index of this item in vegList   
-    index = vegList.findIndex(x => x.id == object.dataset.tag);
+    var index = searchIndex(object,vegList);
 
     object.style.cursor = "pointer";
     if (vegList[index].active == 1) {
@@ -333,17 +324,24 @@ function hoverVeg(object, exit = 0) {
     print_list();
 }
 
-var fridgeDiv = document.getElementById("fridge"),
-    fridgeState = false; // false = hidden
+var fridgeDiv = document.getElementById("fridge")
 /**
- * fridge display button toggle
+ * fridge display open
  */
-function fridgeToggle() {
-    if (fridgeState) {
-        fridgeState = false;
-        fridgeDiv.style.display = "none";
-    } else {
-        fridgeState = true;
-        fridgeDiv.style.display = "block";
+function fridgeOpen() {
+    fridgeDiv.style.display = "block";
+}
+/**
+ * fridge display close
+ */
+function fridgeClose() {
+    fridgeDiv.style.display = "none";
+}
+/**
+ * fridge display close when clicking outside the window
+ */
+window.onclick = function (ev) {
+    if (ev.target == fridgeDiv) {
+        fridgeClose();
     }
 }

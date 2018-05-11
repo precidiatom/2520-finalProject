@@ -236,7 +236,7 @@ body {
 	/*background-color: blue;*/
 	height: 80%;
 	margin: 0% 3% 0% 3%;
-    text-align: center;	
+    text-align: center;
 }
 #cat-ingredients-div {
 	/*background-color: red;*/
@@ -324,7 +324,6 @@ body {
     border-radius: 12px;
     margin: 10px;
     padding: 1px 5px;
-
 }
 
 a {
@@ -406,6 +405,10 @@ a:visited {
     z-index: 10;
 }
 
+#delFavBtn {
+    
+}
+
 #searchlist {
     text-align: center;
     position: relative;
@@ -419,4 +422,3 @@ a:visited {
     width: 33%;
 }
 
-/*test */
