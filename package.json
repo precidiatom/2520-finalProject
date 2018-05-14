@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node bin/www.js",
-    "test": "jest --coverage"
+    "test": ""
   },
   "author": "Emilie Zhang, Danielle Braceros, Precidia Tom",
   "license": "ISC",
